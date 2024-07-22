@@ -1,5 +1,9 @@
 package com.kerem.socialmediabackend.controller;
 
+import com.kerem.socialmediabackend.dto.request.CreatePostRequestDTO;
+import com.kerem.socialmediabackend.dto.response.PostListResponseDTO;
+import com.kerem.socialmediabackend.dto.response.ResponseDto;
+import com.kerem.socialmediabackend.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
