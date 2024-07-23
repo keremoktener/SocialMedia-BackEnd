@@ -1,79 +1,77 @@
 package com.kerem.socialmediabackend.service;
 
 import com.kerem.socialmediabackend.config.JwtManager;
-import com.kerem.socialmediabackend.dto.request.CreateCommentSaveDTO;
-import com.kerem.socialmediabackend.dto.response.CommentListResponseDTO;
+import com.kerem.socialmediabackend.dto.request.AddCommentRequestDto;
+import com.kerem.socialmediabackend.dto.request.GetAllCommentByPostIdRequestDto;
+import com.kerem.socialmediabackend.dto.response.CommentResponseDto;
 import com.kerem.socialmediabackend.entity.Comment;
+import com.kerem.socialmediabackend.entity.User;
 import com.kerem.socialmediabackend.exception.AuthException;
 import com.kerem.socialmediabackend.exception.ErrorType;
 import com.kerem.socialmediabackend.repository.CommentRepository;
-import com.kerem.socialmediabackend.view.VwUserAvatar;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-    private final CommentRepository commentRepository;
-    private final UserService userService;
-
+    private final CommentRepository repository;
     private final JwtManager jwtManager;
-
-    public void saveComment(CreateCommentSaveDTO createCommentSaveDTO) {
-        Long userId = jwtManager.getAuthId(createCommentSaveDTO.getToken()).orElseThrow(() -> new AuthException(ErrorType.INVALID_TOKEN));
-        commentRepository.save(Comment.builder()
-                .comment(createCommentSaveDTO.getComment())
-                .userId(userId)
-                .postId(createCommentSaveDTO.getPostId())
-                .date(System.currentTimeMillis())
-                .build()
-        );
-
+    private final UserService userService;
+    public void addComment(AddCommentRequestDto dto) {
+        Optional<Long> userId =  jwtManager.getAuthId(dto.getToken());
+        if(userId.isEmpty()) throw new AuthException(ErrorType.BAD_REQUEST_INVALID_TOKEN);
+        repository.save(Comment.builder()
+                        .comment(dto.getComment())
+                        .date(System.currentTimeMillis())
+                        .postId(dto.getPostId())
+                        .userId(userId.get())
+                .build());
     }
 
-    public List<CommentListResponseDTO> getCommentsByPostID(Long id) {
-        List<Comment> commentList = commentRepository.findAllByPostId(id);
-        List<CommentListResponseDTO> result = new ArrayList<>();
-        commentList.forEach(comment -> {
-            VwUserAvatar userAvatarAndUserName = userService.getUserAvatarAndUserName(comment.getUserId());
-            result.add(CommentListResponseDTO.builder()
-                            .comment(comment.getComment())
-                            .date(comment.getDate())
-                            .postId(comment.getPostId())
-                            .userId(comment.getUserId())
-                            .userAvatar(userAvatarAndUserName.getAvatar())
-                            .userName(userAvatarAndUserName.getUserName())
-                    .build());
+    public HashMap<Long, List<CommentResponseDto>> getAllCommentListByPostIds(List<Long> postIds){
+        List<Comment> comments = repository.findAllByPostIdIn(postIds);
+        List<CommentResponseDto> commentResponseDtos = getCommentResponseDtos(comments,false);
+        return commentResponseDtos.stream().collect(Collectors.groupingBy(
+           CommentResponseDto::getPostId,
+           HashMap::new,
+           Collectors.toList()
+        ));
+    }
+
+    public List<CommentResponseDto> getAllCommentsByPostId(GetAllCommentByPostIdRequestDto dto) {
+        if(jwtManager.getAuthId(dto.getToken()).isEmpty()) throw new AuthException(ErrorType.BAD_REQUEST_INVALID_TOKEN);
+        Pageable pageable = PageRequest.of(dto.getPage(),dto.getSize());
+        Page<Comment> comments = repository.findAllByPostIdOrderByDateDesc(dto.getPostId(),pageable);
+        return getCommentResponseDtos(comments.getContent(),true);
+    }
+
+    private List<CommentResponseDto> getCommentResponseDtos(List<Comment> comments, boolean isSize) {
+        List<Long> userIds = comments.stream().map(Comment::getUserId).toList();
+        Map<Long, User> userMap = userService.findAllByIdsMap(userIds);
+        List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
+        comments.forEach(c->{
+           if(commentResponseDtos.stream().filter(cr-> cr.getPostId().equals(c.getPostId())).count()<3 || isSize)
+                commentResponseDtos.add(
+                        CommentResponseDto.builder()
+                                .postId(c.getPostId())
+                                .avatar(userMap.get(c.getUserId()).getAvatar())
+                                .comment(c.getComment())
+                                .commentId(c.getId())
+                                .date(c.getDate())
+                                .userId(c.getUserId())
+                                .userName(userMap.get(c.getUserId()).getUserName())
+                                .build()
+                );
         });
-
-        return result;
+        return commentResponseDtos;
     }
 
-//    private HashMap<Long, List<CommentListResponseDTO>> getAllCommentsByPostIds(List<Long> postIds) {
-//        List<Comment> commentList = commentRepository.findAllByPostIdIn(postIds);
-//        List<Long> userIds= commentList.stream().map(Comment::getUserId).toList();
-//        Map<Long, User> userMap = userService.findAllbyIdMap(userIds);
-//        List<CommentListResponseDTO> result = new ArrayList<>();
-//        commentList.forEach(comment -> {
-//            User user = userMap.get(comment.getUserId());
-//            result.add(CommentListResponseDTO.builder()
-//                            .comment(comment.getComment())
-//                            .date(comment.getDate())
-//                            .postId(comment.getPostId())
-//                            .userId(comment.getUserId())
-//                            .userAvatar(user.getAvatar())
-//                            .userName(user.getName())
-//                    .build());
-//        });
-//        return result.stream().collect(Collectors.groupingBy(
-//                CommentListResponseDTO::getPostId,
-//                HashMap::new,
-//                Collectors.toList()
-//        ));
-//
-//
-//    }
+
 }

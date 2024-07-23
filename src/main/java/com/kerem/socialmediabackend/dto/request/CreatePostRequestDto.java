@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class CreatePostRequestDTO {
-    private String comment;
-    private String token;
-    private String url;
-
+public class CreatePostRequestDto {
+    String comment;
+    String token;
+    String url;
 
 }

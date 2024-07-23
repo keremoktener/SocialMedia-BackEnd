@@ -1,17 +1,20 @@
-package com.kerem.socialmediabackend.view;
+package com.kerem.socialmediabackend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
-public class VwSearchUser {
-    Long id;
+public class CommentResponseDto {
+    Long postId;
+    Long commentId;
+    Long userId;
     String userName;
-    String name;
     String avatar;
+    String comment;
+    Long date;
 }

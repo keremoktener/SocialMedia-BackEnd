@@ -6,17 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "tbllike")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long userId;
-    private Long postId;
-    private Long date;
+    Long id;
+    Long userId;
+    Long postId;
+    Long date;
 }

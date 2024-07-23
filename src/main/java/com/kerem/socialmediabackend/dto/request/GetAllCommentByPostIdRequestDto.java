@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FindAllByUsernameRequestDto {
+public class GetAllCommentByPostIdRequestDto {
     String token;
-    String userName;
+    Long postId;
+    int size = 10;
+    int page = 0;
 }

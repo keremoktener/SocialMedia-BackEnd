@@ -1,5 +1,9 @@
 package com.kerem.socialmediabackend.utility;
 
 public enum FollowState {
-    FOLLOW,FOLLOWED
+    BEKLEMEDE,
+    TAKIP_EDIYOR,
+    RED,
+    ENGELLE,
+    TAKIP_ETMIYOR
 }

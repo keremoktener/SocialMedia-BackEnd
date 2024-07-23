@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.kerem.socialmediabackend.exception.ErrorType.BAD_REQUEST_ERROR;
 
 
 @ControllerAdvice
@@ -46,13 +49,13 @@ public class GlobalExceptionHandler {
                 .getBindingResult()
                 .getFieldErrors().forEach(x->fields.add(x.getField()+ ": "+ x.getDefaultMessage()));
 
-        return new ResponseEntity<>(createMessage(ErrorType.BAD_REQUEST_ERROR, exception), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(createMessage(BAD_REQUEST_ERROR, exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(JDBCConnectionException.class)
     public final ResponseEntity<ResponseDto> handleJDBCConnectionException(
             HttpMessageNotReadableException exception) {
-        ErrorType errorType = ErrorType.BAD_REQUEST_ERROR;
+        ErrorType errorType = BAD_REQUEST_ERROR;
         return new ResponseEntity<>(createMessage(errorType, exception), errorType.getHttpStatus());
     }
 
@@ -60,14 +63,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public final ResponseEntity<ResponseDto> handleMessageNotReadableException(
             HttpMessageNotReadableException exception) {
-        ErrorType errorType = ErrorType.BAD_REQUEST_ERROR;
+        ErrorType errorType = BAD_REQUEST_ERROR;
         return new ResponseEntity<>(createMessage(errorType, exception), errorType.getHttpStatus());
     }
 
     @ExceptionHandler(InvalidFormatException.class)
     public final ResponseEntity<ResponseDto> handleInvalidFormatException(
             InvalidFormatException exception) {
-        ErrorType errorType = ErrorType.BAD_REQUEST_ERROR;
+        ErrorType errorType = BAD_REQUEST_ERROR;
         return new ResponseEntity<>(createMessage(errorType, exception), errorType.getHttpStatus());
     }
 
@@ -76,7 +79,7 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<ResponseDto> handleMethodArgumentMisMatchException(
             MethodArgumentTypeMismatchException exception) {
 
-        ErrorType errorType = ErrorType.BAD_REQUEST_ERROR;
+        ErrorType errorType = BAD_REQUEST_ERROR;
         return new ResponseEntity<>(createMessage(errorType, exception), errorType.getHttpStatus());
     }
 
@@ -84,7 +87,7 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<ResponseDto> handleMethodArgumentMisMatchException(
             MissingPathVariableException exception) {
 
-        ErrorType errorType = ErrorType.BAD_REQUEST_ERROR;
+        ErrorType errorType = BAD_REQUEST_ERROR;
         return new ResponseEntity<>(createMessage(errorType, exception), errorType.getHttpStatus());
     }
 

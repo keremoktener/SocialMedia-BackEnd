@@ -6,22 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "tblpost")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long userId;
+    Long id;
+    Long userId;
     @Column(length = 5000)
-    private String comment;
-    private String photo;
-    private Long sharedDate;
-    private Long likeCount;
-    private Long commentCount;
+    String comment;
+    String photo;
+    Long sharedDate;
+    Long likeCount;
+    Long commentCount;
+
 
 }

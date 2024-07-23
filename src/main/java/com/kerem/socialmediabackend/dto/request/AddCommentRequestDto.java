@@ -1,4 +1,4 @@
-package com.kerem.socialmediabackend.dto.response;
+package com.kerem.socialmediabackend.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ResponseDto<T> {
-    Integer code;
-    String message;
-    T data;
+public class AddCommentRequestDto {
+    String token;
+    Long postId;
+    String comment;
 }
