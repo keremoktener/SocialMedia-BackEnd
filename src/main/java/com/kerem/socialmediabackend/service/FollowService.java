@@ -32,4 +32,8 @@ public class FollowService {
                 .build());
 
     }
+
+    public List<Follow> findAllByUserId(Long userId) {
+        return followRepository.findAllByUserId(userId);
+    }
 }

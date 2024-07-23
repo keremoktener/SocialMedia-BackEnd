@@ -2,6 +2,7 @@ package com.kerem.socialmediabackend.repository;
 
 
 import com.kerem.socialmediabackend.entity.User;
+import com.kerem.socialmediabackend.view.VwSearchUser;
 import com.kerem.socialmediabackend.view.VwUserAvatar;
 import com.kerem.socialmediabackend.view.VwUserForFollow;
 import com.kerem.socialmediabackend.view.VwUserProfile;
@@ -35,4 +36,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<VwUserForFollow> findUsersNotFollowedBy(@Param("followedIds") List<Long> followedIds);
 
 
+    List<VwSearchUser> getAllByUserName(String userName);
 }
