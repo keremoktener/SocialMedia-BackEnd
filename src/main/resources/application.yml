@@ -2,6 +2,9 @@ server:
   port: 9090
 
 spring:
+  cloud:
+    gcp:
+      project-id: lofty-fragment-424906-h5
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/Java14SocialMedia
